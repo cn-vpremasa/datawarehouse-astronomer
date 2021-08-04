@@ -5,9 +5,7 @@ from airflow.contrib.operators.databricks_operator import DatabricksSubmitRunOpe
 from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
 from plugins.adops import clusters, config
-from plugins.config import client_data
 from tardis import client
-from plugins.utilities import encrypt_vault_data
 
 # VAULT_HASH = encrypt_vault_data(client_data)
 
