@@ -18,7 +18,7 @@ notebook_params = {
 gam_common_dim_deals = config.dimension_notebooks['gam_common_dim_deals'][config.env]
 
 notebook_task_params_transactions = {
-    'libraries': clusters.adops_trx_libs,
+    'libraries': clusters.adops_libs,
     'notebook_task': {
         'notebook_path': gam_common_dim_deals,
         'base_parameters': notebook_params
