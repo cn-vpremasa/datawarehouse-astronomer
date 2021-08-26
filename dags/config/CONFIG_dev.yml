@@ -1,0 +1,49 @@
+ENV: 'dev'
+BUCKET_NAME: 'cn-hw-nonprod'
+GAM_SOURCE: 'GAM'
+STAQ_SOURCE: 'STAQ'
+gam_report_src_list_dict: ['cnhw_ads.val_GamRpt_OrderLineItem','cnhw_ads.val_GamRpt_Adunit','cnhw_ads.val_GamRpt_Advertiser','cnhw_ads.val_GamRpt_Deal']
+gam_report_sql_query: "select * from (select count(*) as final_count from Final where source in ('cnhw_ads.val_GamRpt_OrderLineItem','cnhw_ads.val_GamRpt_Adunit','cnhw_ads.val_GamRpt_Advertiser','cnhw_ads.val_GamRpt_Deal')  and date(lastUpdatedTs) = current_date and status='Complete') where final_count=4"
+gam_val_src_list_dict: ['dfp.network_impressions','dfp.network_backfill_clicks','dfp.network_backfill_impressions','dfp.network_clicks','cnhw_ads.val_Gam']
+gam_val_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in   ('dfp.network_impressions','dfp.network_backfill_clicks','dfp.network_backfill_impressions','dfp.network_clicks')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.val_Gam' and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  )where final_count=4"
+gam_stand_src_list_dict: ['dfp.network_impressions','dfp.network_clicks','dfp_network_backfill_impressions_parquet','dfp.network_backfill_clicks', 'dfp.advertisers','cnhw_ads.standardization']
+gam_stand_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in   ('dfp.network_backfill_clicks', 'dfp_network_backfill_impressions_parquet', 'dfp.network_clicks', 'dfp.network_impressions', 'dfp.advertisers')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.standardization'  and status = 'Complete' and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  ) as y where y.final_count=5"
+gam_dim_src_list_dict: ['cnhw_ads.standardization','cnhw_ads.val_Gam','dfp.line_items','dfp.ad_units','dfp.orders','cnhw_ads.dimension']
+gam_dim_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in   ('cnhw_ads.standardization','cnhw_ads.val_Gam','dfp.line_items','dfp.ad_units', 'dfp.orders')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.dimension' and status = 'Complete' and date(lastUpdatedTs) < current_date ) and status = 'Complete' group by source )a  ) where final_count=5"
+gam_fact_src_list_dict: ['cnhw_ads.dimension','cnhw_ads.fact_Gam']
+gam_fact_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in  ('cnhw_ads.dimension')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.fact_Gam' and status = 'Complete' and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  ) as y where y.final_count=1"
+staq_fact_src_list_dict: ['cnhw_ads.fact_staq','cnhw_staq.dimension','cnhw_staq.s_advertiser']
+staq_fact_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in   ('cnhw_staq.dimension')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.fact_staq'  and status = 'Complete' and date(lastUpdatedTs) < current_date) and date(lastUpdatedTs) < (select max(lastUpdatedTs) from Final  where source = 'cnhw_staq.s_advertiser' and date(lastUpdatedTs) = current_date) and status = 'Complete' group by source )a  ) as y where y.final_count=1"
+staq_dim_src_list_dict: ['cnhw_staq.standardization','cnhw_staq.dimension']
+staq_dim_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in ('cnhw_staq.standardization')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source in ('cnhw_staq.dimension') and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  ) where final_count=1"
+
+NOTEBOOK_PATHS:
+  MAIN_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/Stand_Testing/Refactoring_driver'
+PROCESS_NAME:
+  LOCATION: 'location'
+  BRAND: 'brand'
+dags:
+  dag_id: 'refactoring_standardisation_dev'
+  owner: 'CNHW-NONPROD'
+  depends_on_past: False
+  gam_schedule: '30 12 * * *'
+  staq_schedule: '40 14 * * *'
+  schedule: '00 13 * * *'
+  email_on_failure: True
+  email_on_success: True
+  email_on_retry: True
+  email: ['manjunath_mani@condenast.com','vinodboosam_premasagar@condenast.com','adops-refactoring-aaaad66jc2h3lz4s4bftdmyztu@condenast.org.slack.com']
+  retries: 1
+  retry_delay: 5
+INCREMENTAL:
+  MIN_WORKERS: 5
+  MAX_WORKERS: 10
+  NODE_TYPE_ID: "i3.xlarge"
+  DRIVER_NODE_TYPE_ID: "m5.4xlarge"
+  SPARK_VERSION: "8.3.x-scala2.12"
+INITIAL:
+  MIN_WORKERS: 5
+  MAX_WORKERS: 30
+  NODE_TYPE_ID: "i3.xlarge"
+  DRIVER_NODE_TYPE_ID: "m5.4xlarge"
+  SPARK_VERSION: "8.3.x-scala2.12"

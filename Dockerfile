@@ -11,3 +11,5 @@ ENV TARDIS_WHEEL_FILE=tardis-0.1.2-py3-none-any.whl
 RUN wget --no-check-certificate https://tardis.conde.io/download/$TARDIS_WHEEL_FILE
 RUN pip install $TARDIS_WHEEL_FILE
 RUN rm $TARDIS_WHEEL_FILE
+RUN pip install pandas==1.2.4
+RUN pip install -U pandasql
