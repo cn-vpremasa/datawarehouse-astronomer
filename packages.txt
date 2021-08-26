@@ -1,0 +1,11 @@
+python3-dev
+pkgconfig
+cairo-dev
+gobject-introspection-dev
+gtk+3.0-dev
+cyrus-sasl-dev
+cyrus-sasl-plain
+libxml2-dev
+libxslt-dev
+gcc
+build-base

@@ -1,0 +1,53 @@
+pipeline:
+  build:
+    image: docker:latest
+    secrets: [ ASTRO_API_KEY_DEV,BASE,REL_NAME_DEV ]
+    commands:
+      - echo $${BASE}
+      - echo $${REL_NAME_DEV}
+      - docker build -t registry."$${BASE}"/"$${REL_NAME_DEV}"/airflow:ci-${DRONE_BUILD_NUMBER} .
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    when:
+      event: push
+      branch: [ development, release-* ]
+
+  push:
+    image: docker:latest
+    commands:
+      - echo $${ASTRO_API_KEY_DEV}
+      - pip install pyflakes && find ./* -name "*.py" -not -path "./venv/*" ! -name "__init__.py" | pyflakes
+      - docker login registry."$${BASE}" -u _ -p "$${ASTRO_API_KEY_DEV}"
+      - docker push registry."$${BASE}"/"$${REL_NAME_DEV}"/airflow:ci-${DRONE_BUILD_NUMBER}
+    secrets: [ ASTRO_API_KEY_DEV,BASE,REL_NAME_DEV ]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    when:
+      event: push
+      branch: [ development, release-* ]
+
+  build-prod:
+    image: docker:latest
+    secrets: [ ASTRO_API_KEY_PROD,BASE,REL_NAME_PROD ]
+    commands:
+      - echo $${BASE}
+      - echo $${REL_NAME_PROD}
+      - docker build -t registry."$${BASE}"/"$${REL_NAME_PROD}"/airflow:ci-${DRONE_BUILD_NUMBER} .
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    when:
+      event: push
+      branch: [ master, release-* ]
+
+  push-prod:
+    image: docker:latest
+    commands:
+      - echo $${ASTRO_API_KEY_PROD}
+      - docker login registry."$${BASE}" -u _ -p "$${ASTRO_API_KEY_PROD}"
+      - docker push registry."$${BASE}"/"$${REL_NAME_PROD}"/airflow:ci-${DRONE_BUILD_NUMBER}
+    secrets: [ ASTRO_API_KEY_PROD,BASE,REL_NAME_PROD ]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    when:
+      event: push
+      branch: [ master, release-* ]
