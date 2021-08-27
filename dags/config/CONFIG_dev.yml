@@ -16,6 +16,20 @@ staq_fact_src_list_dict: ['cnhw_ads.fact_staq','cnhw_staq.dimension','cnhw_staq.
 staq_fact_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in   ('cnhw_staq.dimension')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.fact_staq'  and status = 'Complete' and date(lastUpdatedTs) < current_date) and date(lastUpdatedTs) < (select max(lastUpdatedTs) from Final  where source = 'cnhw_staq.s_advertiser' and date(lastUpdatedTs) = current_date) and status = 'Complete' group by source )a  ) as y where y.final_count=1"
 staq_dim_src_list_dict: ['cnhw_staq.standardization','cnhw_staq.dimension']
 staq_dim_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in ('cnhw_staq.standardization')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source in ('cnhw_staq.dimension') and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  ) where final_count=1"
+staq_stand_src_list_dict_1: ['cnhw_ads.fact_Gam_process','cnhw_ads.val_Staq','cnhw_staq.standardization']
+staq_stand_sql_query_1: "select * from (select count(*) as final_count from  (select count(source) from Final where source in  ('cnhw_ads.fact_Gam_process','cnhw_ads.val_Staq')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_staq.standardization' and status = 'Complete' and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  ) as y where y.final_count=1"
+staq_stand_src_list_dict_2: ['cnhw_ads.s_advertiser', 'cnhw_ads.s_device', 'cnhw_ads.s_location', 'cnhw_ads.s_brand','cnhw_staq.standardization']
+staq_stand_sql_query_2: "select * from (select count(*) as final_count from (select count(source) from Final where source in ('cnhw_ads.s_advertiser', 'cnhw_ads.s_device', 'cnhw_ads.s_location', 'cnhw_ads.s_brand','cnhw_staq.standardization') and comments <> 'PS STARTED ' and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) FROM Final where  source = 'cnhw_staq.standardization' and status in ('Complete', 'Forced Complete') and date(lastUpdatedTs) < current_Date) group by source)a) as y  where y.final_count=3"
+staq_val_src_list_dict_1: ['staq.rubicon', 'staq.appnexus', 'staq.index_exchange_v2','cnhw_ads.val_Staq']
+staq_val_sql_query_1: "select count(*)  from Final where source in  ('staq.rubicon', 'staq.appnexus', 'staq.index_exchange_v2') and date(lastUpdatedTs) > (select date(max (lastUpdatedTs)) from Final where source='cnhw_ads.val_Staq' and status in ('Complete','Forced Complete') and date(lastUpdatedTs) <> current_date) and logdate <> current_date and comments != 'PS UNFULFILLED DEPENDENCY Data Not Received'"
+staq_val_src_list_dict_2: ['staq.rubicon','staq.appnexus','staq.index_exchange_v2','cnhw_ads.val_Staq']
+staq_val_sql_query_2: "SELECT count(*) FROM (SELECT source,logdate,STATUS,lastUpdatedTs FROM Final WHERE source IN ('staq.rubicon','staq.appnexus','staq.index_exchange_v2')  AND date(lastUpdatedTs) > (SELECT date(max (lastUpdatedTs)) FROM Final WHERE source = 'cnhw_ads.val_Staq' AND STATUS IN ('Complete', 'Forced Complete') AND date(lastUpdatedTs) <> current_date) AND logdate <> current_date AND comments != 'PS UNFULFILLED DEPENDENCY Data Not Received'
+EXCEPT
+SELECT source,logdate, STATUS, lastUpdatedTs FROM Final WHERE source IN ('staq.rubicon','staq.appnexus','staq.index_exchange_v2') AND STATUS = 'Complete' AND date(lastUpdatedTs) > ( SELECT date(max (lastUpdatedTs)) FROM Final WHERE source = 'cnhw_ads.val_Staq' AND STATUS IN ('Complete', 'Forced Complete')
+AND date(lastUpdatedTs) <> current_date)) AS cnt"
+
+
+
 
 NOTEBOOK_PATHS:
   MAIN_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/Stand_Testing/Refactoring_driver'
