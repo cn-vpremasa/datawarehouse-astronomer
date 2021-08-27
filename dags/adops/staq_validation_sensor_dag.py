@@ -15,7 +15,7 @@ from dags.utils.common_sensor_funct_utils import Criteria
 from dags.utils.common_sensor_funct_utils import *
 import pandas as pd
 import pandasql as ps
-import time
+import timestaq_stand_sql_query_1
 
 os.environ['ENVIRONMENT'] = 'production'
 from tardis import client
@@ -33,7 +33,7 @@ with DAG("staq_validation_sensor_dag" ,start_date=datetime(2021, 8, 19),schedule
 
     t1 = PythonOperator(task_id='staq_validation_sensor_task_1',
                         python_callable=Criteria,
-                        op_args=(CONFIG['staq_val_src_list_dict_1'],CONFIG['staq_stand_sql_query_1']))
+                        op_args=(CONFIG['staq_val_src_list_dict_1'],CONFIG['staq_val_sql_query_1']))
 
     t2 = PythonOperator(task_id='staq_validation_sensor_task_2',
                         python_callable=Criteria,
