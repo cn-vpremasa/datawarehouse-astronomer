@@ -1,5 +1,6 @@
 from functools import partial
 from airflow import DAG
+import os
 from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.operators.databricks_operator import DatabricksSubmitRunOperator
 from plugins.adops.airflow_connections import create_airflow_connection, list_connections
