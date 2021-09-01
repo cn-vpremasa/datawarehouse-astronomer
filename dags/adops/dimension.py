@@ -67,6 +67,7 @@ with DAG('adops_dimensions',
          max_active_runs=3,
          schedule_interval='30 14 * * *',  # https://airflow.apache.org/docs/stable/scheduler.html#dag-runs
          default_args=default_args,
+         python_callable=my_callable,
          catchup=False
          ) as dag:
     dummy_task_start = DummyOperator(
@@ -81,5 +82,7 @@ with DAG('adops_dimensions',
     dummy_task_end = DummyOperator(
         task_id='End')
     dummy_task_end
+
+
 
     dummy_task_start >> task_gam_common_dim_deal >> dummy_task_end
