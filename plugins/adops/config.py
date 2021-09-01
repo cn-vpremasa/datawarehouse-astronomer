@@ -7,7 +7,7 @@ env = environ["ENV"]
 source_table_dict = {'gam_advertisers': 'gam.advertisers_3379'
     , 'gam_orders': 'gam.orders_3379'
     , 'gam_deals': 'gam.deals_3379'
-    ,'gam_ad_units': 'gam.ad_units_3379'
+    , 'gam_ad_units': 'gam.ad_units_3379'
     , 'gam_line_items': 'gam.line_items_3379'
     , 'gam_network_backfill_imp': 'gam.NetworkBackfillImpressions_45577845'
                      }

@@ -2,27 +2,23 @@ from functools import partial
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.operators.databricks_operator import DatabricksSubmitRunOperator
+from plugins.adops.airflow_connections import create_airflow_connection, list_connections
 from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
+from airflow.models import Connection
 from plugins.adops import clusters, config
+from plugins.adops.vault import vault_instance
+import logging, json
 from tardis import client
+ASTRONOMER_ENV = os.environ.get("ENV", "dev")
 
-# VAULT_HASH = encrypt_vault_data(client_data)
 
 notebook_params = {
     'argument': '{{ds}}',  # processing data for day-1
-    'env': config.env,
-#    'tokens': VAULT_HASH
+    'env': ASTRONOMER_ENV
 }
 
 gam_common_dim_deals = config.dimension_notebooks['gam_common_dim_deals'][config.env]
-
-notebook_task_params_transactions = {
-    'libraries': clusters.adops_libs,
-    'notebook_task': {
-        'notebook_path': gam_common_dim_deals,
-        'base_parameters': notebook_params
-    }, 'existing_cluster': clusters.adops['cluster_id']}
 
 default_args = {
     'owner': 'Bala Murugan',
@@ -32,6 +28,39 @@ default_args = {
     'retries': 3,
     'retry_delay': timedelta(minutes=15)
 }
+
+evergreen_dev_workspace_token = vault_instance.get_secret("automation-sp-data-warehouse-group-development")
+
+
+if ASTRONOMER_ENV.lower() == "dev":
+    WORKSPACE_TOKEN = evergreen_dev_workspace_token
+    WORKSPACE_HOST = os.getenv('DATABRICKS_HOST')
+    WORKSPACE_CONN_ID = os.getenv('DATABRICKS_WORKSPACE')
+
+
+
+def my_callable():
+    logger = logging.getLogger("airflow.task")
+    TOKEN = WORKSPACE_TOKEN
+    HOST = WORKSPACE_HOST
+    CONN_ID = WORKSPACE_CONN_ID
+    logger.info("Attempting to Create Airflow Connection")
+    create_airflow_connection(conn_id=CONN_ID,
+                              conn_type="databricks",
+                              host=HOST,
+                              login=None,
+                              password=None,
+                              port=None,
+                              extra=json.dumps({"token": TOKEN, "host": HOST.split("//")[1]}),
+                              uri=None
+                              )
+
+notebook_task_params_transactions = {
+    'libraries': clusters.adops_libs,
+    'notebook_task': {
+        'notebook_path': gam_common_dim_deals,
+        'base_parameters': notebook_params
+    }, 'existing_cluster': clusters.adops['cluster_id']}
 
 with DAG('adops_dimensions',
          start_date=datetime(2021, 1, 1),
