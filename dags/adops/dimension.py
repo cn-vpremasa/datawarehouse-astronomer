@@ -7,7 +7,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
 from airflow.models import Connection
 from plugins.adops import clusters, config
-from plugins.adops.vault import vault_instance
+#from plugins.adops.vault import vault_instance
 import logging, json
 ASTRONOMER_ENV = os.environ.get("ENV", "dev")
 
