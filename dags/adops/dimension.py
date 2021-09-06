@@ -34,8 +34,8 @@ evergreen_dev_workspace_token = "dapi9a833498f2d1c91d08da7c762c4f5a4a"
 
 if ASTRONOMER_ENV.lower() == "dev":
     WORKSPACE_TOKEN = evergreen_dev_workspace_token
-    WORKSPACE_HOST = os.getenv('DATABRICKS_HOST')
-    WORKSPACE_CONN_ID = os.getenv('DATABRICKS_WORKSPACE')
+    WORKSPACE_HOST = os.environ['DATABRICKS_HOST']
+    WORKSPACE_CONN_ID = os.environ['DATABRICKS_WORKSPACE']
 
 
 def my_callable():
