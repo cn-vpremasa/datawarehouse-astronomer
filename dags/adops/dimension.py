@@ -8,10 +8,10 @@ from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
 from airflow.models import Connection
 from plugins.adops import clusters, config
-#from plugins.adops.vault import vault_instance
+# from plugins.adops.vault import vault_instance
 import logging, json
-ASTRONOMER_ENV = os.environ.get("ENV", "dev")
 
+ASTRONOMER_ENV = os.environ.get("ENV", "dev")
 
 notebook_params = {
     'argument': '{{ds}}',  # processing data for day-1
@@ -29,14 +29,13 @@ default_args = {
     'retry_delay': timedelta(minutes=15)
 }
 
-#evergreen_dev_workspace_token = vault_instance.get_secret("automation-sp-data-warehouse-group-development")
+# evergreen_dev_workspace_token = vault_instance.get_secret("automation-sp-data-warehouse-group-development")
 evergreen_dev_workspace_token = "dapi9a833498f2d1c91d08da7c762c4f5a4a"
 
 if ASTRONOMER_ENV.lower() == "dev":
     WORKSPACE_TOKEN = evergreen_dev_workspace_token
     WORKSPACE_HOST = os.getenv('DATABRICKS_HOST')
     WORKSPACE_CONN_ID = os.getenv('DATABRICKS_WORKSPACE')
-
 
 
 def my_callable():
@@ -51,9 +50,10 @@ def my_callable():
                               login=None,
                               password=None,
                               port=None,
-                              extra=json.dumps({"token": TOKEN, "host": HOST.split("//")[1]}),
+                              extra=json.dumps({"token": TOKEN, "host": HOST}),
                               uri=None
                               )
+
 
 notebook_task_params_transactions = {
     'libraries': clusters.adops_libs,
@@ -88,6 +88,4 @@ with DAG('adops_dimensions',
         python_callable=my_callable,
     )
 
-
-
-    dummy_task_start>> conn_ops>> task_gam_common_dim_deal >> dummy_task_end
+    dummy_task_start >> conn_ops >> task_gam_common_dim_deal >> dummy_task_end
