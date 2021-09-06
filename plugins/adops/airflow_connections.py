@@ -37,17 +37,3 @@ def list_connections(session):
 
     return _c
 
-if __name__ == "__main__":
-    TOKEN="abc"
-    HOST="https://condenast-dev.cloud.databricks.com"
-    create_airflow_connection(conn_id="databricks_dev_workspace",
-                              # Databricks doesn't work find the constant in the source code
-                              conn_type="Databricks",
-                              host=HOST,
-                              login="token",
-                              password=None,
-                              port=None,
-                              extra=str({"token" : TOKEN, "host": HOST}),
-                              uri=None
-                              )
-    pass

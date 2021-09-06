@@ -1,5 +1,6 @@
 # This is the gold layer cluster info
-adops = {"cluster_id": "0603-090325-flab576"}
+adops = {"cluster_id": "0603-090325-flab576"
+         }
 adops_libs = [
     {
         "pypi": {"package": "hvac"}

@@ -38,6 +38,7 @@ if ASTRONOMER_ENV.lower() == "dev":
     WORKSPACE_CONN_ID = os.environ['DATABRICKS_WORKSPACE']
 
 
+
 def my_callable():
     logger = logging.getLogger("airflow.task")
     TOKEN = WORKSPACE_TOKEN
@@ -60,7 +61,7 @@ notebook_task_params_transactions = {
     'notebook_task': {
         'notebook_path': gam_common_dim_deals,
         'base_parameters': notebook_params
-    }, 'existing_cluster': clusters.adops['cluster_id']}
+    }, 'existing_cluster_id': clusters.adops['cluster_id']}
 
 with DAG('adops_dimensions',
          start_date=datetime(2021, 1, 1),
