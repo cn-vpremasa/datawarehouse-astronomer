@@ -1,5 +1,6 @@
 from functools import partial
 from airflow import DAG
+from airflow import settings
 import os,logging
 from airflow.operators.python_operator import PythonOperator
 from airflow.contrib.operators.databricks_operator import DatabricksSubmitRunOperator
@@ -54,7 +55,9 @@ def my_callable():
                               extra=json.dumps({"token": TOKEN, "host": HOST}),
                               uri=None
                               )
-logging.info(WORKSPACE_CONN_ID)
+    for index, item in enumerate(list_connections(settings.Session)):
+        logger.info("Connections Index: [{}] Item: [{}]".format(str(index), str(item)))
+
 
 
 
