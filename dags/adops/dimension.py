@@ -54,6 +54,9 @@ def my_callable():
                               extra=json.dumps({"token": TOKEN, "host": HOST}),
                               uri=None
                               )
+print(WORKSPACE_CONN_ID)
+print(f"AIRFLOW_CONN_{create_airflow_connection.conn.conn_id.upper()}='{create_airflow_connection.get_uri()}'")
+
 
 
 notebook_task_params_transactions = {
@@ -62,7 +65,7 @@ notebook_task_params_transactions = {
         'notebook_path': gam_common_dim_deals,
         'base_parameters': notebook_params
     }, 'existing_cluster_id': clusters.adops['cluster_id']}
-
+print(clusters.adops['cluster_id'])
 with DAG('adops_dimensions',
          start_date=datetime(2021, 1, 1),
          max_active_runs=3,
