@@ -82,7 +82,7 @@ with DAG('adops_dimensions',
 
     task_gam_common_dim_deal = DatabricksSubmitRunOperator(
         task_id='gam_common_dim_deal',
-        databricks_conn_id=WORKSPACE_CONN_ID,
+        databricks_conn_id='databricks_dev_workspace',
         json=notebook_task_params_transactions)
     task_gam_common_dim_deal
 
