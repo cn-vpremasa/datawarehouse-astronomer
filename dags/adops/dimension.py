@@ -55,7 +55,7 @@ def my_callable():
                               uri=None
                               )
 print(WORKSPACE_CONN_ID)
-print(f"AIRFLOW_CONN_{create_airflow_connection.conn.conn_id.upper()}='{create_airflow_connection.get_uri()}'")
+
 
 
 
