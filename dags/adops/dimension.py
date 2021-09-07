@@ -38,7 +38,7 @@ if ASTRONOMER_ENV.lower() == "dev":
     WORKSPACE_HOST = os.environ['DATABRICKS_HOST']
     WORKSPACE_CONN_ID = os.environ['DATABRICKS_WORKSPACE']
 
-
+AIRFLOW_CONN_DATABRICKS_DEFAULT='databricks://@{WORKSPACE_HOST}?token={WORKSPACE_TOKEN}'.format(WORKSPACE_HOST=WORKSPACE_HOST, WORKSPACE_TOKEN=WORKSPACE_TOKEN)
 
 def my_callable():
     logger = logging.getLogger("airflow.task")
@@ -82,7 +82,7 @@ with DAG('adops_dimensions',
 
     task_gam_common_dim_deal = DatabricksSubmitRunOperator(
         task_id='gam_common_dim_deal',
-        databricks_conn_id=WORKSPACE_CONN_ID,
+        databricks_conn_id=AIRFLOW_CONN_DATABRICKS_DEFAULT,
         json=notebook_task_params_transactions)
     task_gam_common_dim_deal
 
