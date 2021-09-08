@@ -17,6 +17,11 @@ def create_airflow_connection(conn_id, conn_type,host, login, password, port, ex
     )
 
     session = settings.Session
+    session.add(conn)
+    session.commit()
+    session.close()
+
+
 
     if (force_create) or (conn_id not in [str(c) for c in list_connections(session)]):
         session = settings.Session
