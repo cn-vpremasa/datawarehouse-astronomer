@@ -14,6 +14,6 @@ source_table_dict = {'gam_advertisers': 'gam.advertisers_3379'
 
 dimension_notebooks = {
     'gam_common_dim_deals': {
-        'dev': '/Repos/BalaMurugan_Amirthalingam@condenast.com/datawarehouse-cnhw/Dimension/Source Code/Common_dim_deal/common_dim_deal',
-        'prod': '/Repos/BalaMurugan_Amirthalingam@condenast.com/datawarehouse-cnhw/Dimension/Source Code/Common_dim_deal/common_dim_deal'},
+        'dev': '/Repos/BalaMurugan_Amirthalingam@condenast.com/datawarehouse-cnhw/Dimension/Source_Code/Common_dim_deal/common_dim_deal',
+        'prod': '/Repos/BalaMurugan_Amirthalingam@condenast.com/datawarehouse-cnhw/Dimension/Source_Code/Common_dim_deal/common_dim_deal'},
 }
