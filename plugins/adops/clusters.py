@@ -18,6 +18,6 @@ adops_libs = [
         "pypi": {"package": "thrift"}
     },
     {
-        "jar": "dbfs:/FileStore/datawarehouse/jars/tardis-0.1.2.whl"
+        "jar": "dbfs:/FileStore/jars/a853e0a2_2bfc_4733_9f9d_d178f86df699/tardis-0.1.2-py3-none-any.whl"
     }
 ]
