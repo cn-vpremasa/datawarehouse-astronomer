@@ -30,8 +30,8 @@ default_args = {
     'retry_delay': timedelta(minutes=15)
 }
 
-# evergreen_dev_workspace_token = vault_instance.get_secret("automation-sp-data-warehouse-group-development")
-evergreen_dev_workspace_token = "dapi9a833498f2d1c91d08da7c762c4f5a4a"
+evergreen_dev_workspace_token = vault_instance.get_secret("automation-sp-data-warehouse-group-development")
+#evergreen_dev_workspace_token = "dapi9a833498f2d1c91d08da7c762c4f5a4a"
 
 if ASTRONOMER_ENV.lower() == "dev":
     WORKSPACE_TOKEN = evergreen_dev_workspace_token
