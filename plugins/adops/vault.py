@@ -14,7 +14,7 @@ class Vault():
     def __init__(self):
         self.secret = None
 
-    def get_vault_data(self, url=get_vault_address(), token=get_vault_token(), force_refresh=False, SECRET_PATH="secret/data-services/evergreen/service-principals/"):
+    def get_vault_data(self, url=get_vault_address(), token=get_vault_token(), force_refresh=False, SECRET_PATH="secret/data-services/evergreen/ci/service-principals/"):
         if force_refresh is True:
             client = hvac.Client(url=url, token=token)
             self.secret = client.read(SECRET_PATH)['data']
