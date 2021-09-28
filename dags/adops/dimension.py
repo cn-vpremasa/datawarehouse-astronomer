@@ -9,7 +9,7 @@ from airflow.operators.dummy_operator import DummyOperator
 from datetime import datetime, timedelta
 from airflow.models import Connection
 from plugins.adops import clusters, config
-# from plugins.adops.vault import vault_instance
+from plugins.adops.vault import vault_instance
 import logging, json
 
 ASTRONOMER_ENV = os.environ.get("ENV", "dev")
@@ -31,7 +31,6 @@ default_args = {
 }
 
 evergreen_dev_workspace_token = vault_instance.get_secret("automation-sp-data-warehouse-group-development")
-#evergreen_dev_workspace_token = "dapi9a833498f2d1c91d08da7c762c4f5a4a"
 
 if ASTRONOMER_ENV.lower() == "dev":
     WORKSPACE_TOKEN = evergreen_dev_workspace_token
