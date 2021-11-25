@@ -1,63 +1,50 @@
 ENV: 'dev'
-BUCKET_NAME: 'cn-hw-nonprod'
+BUCKET_NAME: 'cn-dse-adops-use-1-dev'
 GAM_SOURCE: 'GAM'
-STAQ_SOURCE: 'STAQ'
-gam_report_src_list_dict: ['cnhw_ads.val_GamRpt_OrderLineItem','cnhw_ads.val_GamRpt_Adunit','cnhw_ads.val_GamRpt_Advertiser','cnhw_ads.val_GamRpt_Deal']
-gam_report_sql_query: "select * from (select count(*) as final_count from Final where source in ('cnhw_ads.val_GamRpt_OrderLineItem','cnhw_ads.val_GamRpt_Adunit','cnhw_ads.val_GamRpt_Advertiser','cnhw_ads.val_GamRpt_Deal')  and date(lastUpdatedTs) = current_date and status='Complete') where final_count=4"
-gam_val_src_list_dict: ['dfp.network_impressions','dfp.network_backfill_clicks','dfp.network_backfill_impressions','dfp.network_clicks','cnhw_ads.val_Gam']
-gam_val_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in   ('dfp.network_impressions','dfp.network_backfill_clicks','dfp.network_backfill_impressions','dfp.network_clicks')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.val_Gam' and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  )where final_count=4"
-gam_stand_src_list_dict: ['dfp.network_impressions','dfp.network_clicks','dfp_network_backfill_impressions_parquet','dfp.network_backfill_clicks', 'dfp.advertisers','cnhw_ads.standardization']
-gam_stand_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in   ('dfp.network_backfill_clicks', 'dfp_network_backfill_impressions_parquet', 'dfp.network_clicks', 'dfp.network_impressions', 'dfp.advertisers')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.standardization'  and status = 'Complete' and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  ) as y where y.final_count=5"
-gam_dim_src_list_dict: ['cnhw_ads.standardization','cnhw_ads.val_Gam','dfp.line_items','dfp.ad_units','dfp.orders','cnhw_ads.dimension']
-gam_dim_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in   ('cnhw_ads.standardization','cnhw_ads.val_Gam','dfp.line_items','dfp.ad_units', 'dfp.orders')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.dimension' and status = 'Complete' and date(lastUpdatedTs) < current_date ) and status = 'Complete' group by source )a  ) where final_count=5"
-gam_fact_src_list_dict: ['cnhw_ads.dimension','cnhw_ads.fact_Gam']
-gam_fact_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in  ('cnhw_ads.dimension')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.fact_Gam' and status = 'Complete' and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  ) as y where y.final_count=1"
-staq_fact_src_list_dict: ['cnhw_ads.fact_staq','cnhw_staq.dimension','cnhw_staq.s_advertiser']
-staq_fact_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in   ('cnhw_staq.dimension')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_ads.fact_staq'  and status = 'Complete' and date(lastUpdatedTs) < current_date) and date(lastUpdatedTs) < (select max(lastUpdatedTs) from Final  where source = 'cnhw_staq.s_advertiser' and date(lastUpdatedTs) = current_date) and status = 'Complete' group by source )a  ) as y where y.final_count=1"
-staq_dim_src_list_dict: ['cnhw_staq.standardization','cnhw_staq.dimension']
-staq_dim_sql_query: "select * from (select count(*) as final_count from  (select count(source) from Final where source in ('cnhw_staq.standardization')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source in ('cnhw_staq.dimension') and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  ) where final_count=1"
-staq_stand_src_list_dict_1: ['cnhw_ads.fact_Gam_process','cnhw_ads.val_Staq','cnhw_staq.standardization']
-staq_stand_sql_query_1: "select * from (select count(*) as final_count from  (select count(source) from Final where source in  ('cnhw_ads.fact_Gam_process','cnhw_ads.val_Staq')  and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) from Final where source = 'cnhw_staq.standardization' and status = 'Complete' and date(lastUpdatedTs) < current_date) and status = 'Complete' group by source )a  ) as y where y.final_count=1"
-staq_stand_src_list_dict_2: ['cnhw_ads.s_advertiser', 'cnhw_ads.s_device', 'cnhw_ads.s_location', 'cnhw_ads.s_brand','cnhw_staq.standardization']
-staq_stand_sql_query_2: "select * from (select count(*) as final_count from (select count(source) from Final where source in ('cnhw_ads.s_advertiser', 'cnhw_ads.s_device', 'cnhw_ads.s_location', 'cnhw_ads.s_brand','cnhw_staq.standardization') and comments <> 'PS STARTED ' and date(lastUpdatedTs) > (select max(date(lastUpdatedTs)) FROM Final where  source = 'cnhw_staq.standardization' and status in ('Complete', 'Forced Complete') and date(lastUpdatedTs) < current_Date) group by source)a) as y  where y.final_count=3"
-staq_val_src_list_dict_1: ['staq.rubicon', 'staq.appnexus', 'staq.index_exchange_v2','cnhw_ads.val_Staq']
-staq_val_sql_query_1: "select count(*)  from Final where source in  ('staq.rubicon', 'staq.appnexus', 'staq.index_exchange_v2') and date(lastUpdatedTs) > (select date(max (lastUpdatedTs)) from Final where source='cnhw_ads.val_Staq' and status in ('Complete','Forced Complete') and date(lastUpdatedTs) <> current_date) and logdate <> current_date and comments != 'PS UNFULFILLED DEPENDENCY Data Not Received'"
-staq_val_src_list_dict_2: ['staq.rubicon','staq.appnexus','staq.index_exchange_v2','cnhw_ads.val_Staq']
-staq_val_sql_query_2: "SELECT count(*) FROM (SELECT source,logdate,STATUS,lastUpdatedTs FROM Final WHERE source IN ('staq.rubicon','staq.appnexus','staq.index_exchange_v2')  AND date(lastUpdatedTs) > (SELECT date(max (lastUpdatedTs)) FROM Final WHERE source = 'cnhw_ads.val_Staq' AND STATUS IN ('Complete', 'Forced Complete') AND date(lastUpdatedTs) <> current_date) AND logdate <> current_date AND comments != 'PS UNFULFILLED DEPENDENCY Data Not Received'
-EXCEPT
-SELECT source,logdate, STATUS, lastUpdatedTs FROM Final WHERE source IN ('staq.rubicon','staq.appnexus','staq.index_exchange_v2') AND STATUS = 'Complete' AND date(lastUpdatedTs) > ( SELECT date(max (lastUpdatedTs)) FROM Final WHERE source = 'cnhw_ads.val_Staq' AND STATUS IN ('Complete', 'Forced Complete')
-AND date(lastUpdatedTs) <> current_date)) AS cnt"
-
-
-
+AUTH_FILE: '/dbfs/FileStore/data_adops/validation/download_report/config_files/dfpAuth.yml'
+gam_report_src_list_dict: ['cnhw_ads.val_GamRpt_OrderLineItem_v2','cnhw_ads.val_GamRpt_Adunit_v2','cnhw_ads.val_GamRpt_Advertiser_v2','cnhw_ads.val_GamRpt_Deal_v2']
+gam_report_sql_query: "select * from (select count(*) as final_count from data_availability where source in ('cnhw_ads.val_GamRpt_OrderLineItem_v2','cnhw_ads.val_GamRpt_Adunit_v2','cnhw_ads.val_GamRpt_Advertiser_v2','cnhw_ads.val_GamRpt_Deal_v2')  and date(lastUpdatedTs) = current_date and status='Complete') where final_count=4"
+gam_val_src_list_dict: ['gam.NetworkImpressions_3379','gam.NetworkBackfillImpressions_3379','gam.NetworkClicks_3379', 'gam.NetworkBackfillClicks_3379','cnhw_ads.val_Gam_v2']
+gam_val_sql_query: "select * from (select count(*) as final_count from  (select count(source) from data_availability where source in   ('gam.NetworkImpressions_3379','gam.NetworkBackfillImpressions_3379','gam.NetworkClicks_3379', 'gam.NetworkBackfillClicks_3379')  and replace(lastUpdatedTs,'T',' ') > (select max(replace(data_availability.lastUpdatedTs,'T',' ')) from data_availability,curr_date_time where data_availability.source = 'cnhw_ads.val_Gam_v2' and replace(data_availability.lastUpdatedTs,'T',' ') < replace(curr_date_time.curr_date_time,'T',' ') and data_availability.status = 'Complete') and status = 'Complete' group by source )a  )where final_count=4"
+gam_stand_src_list_dict: ['gam.company','gam.NetworkImpressions_3379','gam.NetworkBackfillImpressions_3379','gam.NetworkClicks_3379', 'gam.NetworkBackfillClicks_3379','cnhw_ads.standardization_v2']
+gam_stand_sql_query: "select * from (select count(*) as final_count from  (select count(source) from data_availability where source in   ('gam.company','gam.NetworkImpressions_3379','gam.NetworkBackfillImpressions_3379','gam.NetworkClicks_3379', 'gam.NetworkBackfillClicks_3379')  and replace(lastUpdatedTs,'T',' ') > (select max(replace(data_availability.lastUpdatedTs,'T',' ')) from data_availability,curr_date_time where data_availability.source = 'cnhw_ads.standardization_v2' and replace(data_availability.lastUpdatedTs,'T',' ') < replace(curr_date_time.curr_date_time,'T',' ') and data_availability.status = 'Complete') and status = 'Complete' group by source )a  ) where final_count=5"
+gam_dim_src_list_dict: ['cnhw_ads.standardization_v2','cnhw_ads.val_Gam_v2','gam.line_items_3379','gam.ad_units_3379','gam.orders_3379','cnhw_ads.dimension_v2']
+gam_dim_sql_query: "select * from (select count(*) as final_count from  (select count(source) from data_availability where source in   ('cnhw_ads.standardization_v2','cnhw_ads.val_Gam_v2','gam.line_items_3379','gam.ad_units_3379', 'gam.orders_3379')  and replace(lastUpdatedTs,'T',' ') > (select max(replace(data_availability.lastUpdatedTs,'T',' ')) from data_availability,curr_date_time where data_availability.source = 'cnhw_ads.dimension_v2' and replace(data_availability.lastUpdatedTs,'T',' ') < replace(curr_date_time.curr_date_time,'T',' ') and data_availability.status = 'Complete') and status = 'Complete' group by source )a  ) where final_count=5"
 
 NOTEBOOK_PATHS:
-  MAIN_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/Stand_Testing/Refactoring_driver'
+  DOWNLOAD_REPORT: '/Repos/Manjunath_Mani@condenast.com/datawarehouse-cnhw_v2/adops/validation/down_report_script/val_gam_summary_reports_etl'
+  GAM_ETL_VALDATION: '/Repos/Manjunath_Mani@condenast.com/datawarehouse-cnhw_v2/adops/validation/gam_validation/val_gam_validation_etl'
+  BUSMAP_NOTEBOOK: '/Repos/Manjunath_Mani@condenast.com/datawarehouse-cnhw_v2/adops/standardization/incremental/download_bus_mapping'
+  STND_DRIVER_NOTEBOOK: '/Repos/Manjunath_Mani@condenast.com/datawarehouse-cnhw_v2/adops/standardization/incremental/driver'
+  ADUNITS_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_adunits_etl'
+  ADVERTISER_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_advertiser_etl'
+  BRAND_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_brand_etl'
+  LINEITEMS_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_lineitems_etl'
+  LOCATION_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_location_etl'
+  ORDERS_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_orders_etl'
+  STND_POSTLOAD_UPDT: '/Users/Manjunath_Mani@condenast.com/adops/standardization/incremental/driver_dimension'
 PROCESS_NAME:
   LOCATION: 'location'
   BRAND: 'brand'
+  ADUNITS: 'adunits'
+  ADVERTISER: 'advertiser'
+  LINEITEMS: 'lineitems'
+  ORDERS: 'orders'
+  DEVICE: 'device'
 dags:
-  dag_id: 'refactoring_standardisation_dev'
-  owner: 'CNHW-NONPROD'
+  gam_master_dag_id: 'gam_master'
+  gam_dim_dag_id: 'gam_dim'
+  gam_stnd_dag_id: 'gam_standardization'
+  owner: 'adops'
   depends_on_past: False
   gam_schedule: '30 12 * * *'
-  staq_schedule: '40 14 * * *'
+  gam_stnd_schedule: '00 12 * * *'
   schedule: '00 13 * * *'
   email_on_failure: True
   email_on_success: True
   email_on_retry: True
-  email: ['manjunath_mani@condenast.com','vinodboosam_premasagar@condenast.com','adops-refactoring-aaaad66jc2h3lz4s4bftdmyztu@condenast.org.slack.com']
+  email: ['manjunath_mani@condenast.com','vinodboosam_premasagar@condenast.com']
   retries: 1
   retry_delay: 5
-INCREMENTAL:
-  MIN_WORKERS: 5
-  MAX_WORKERS: 10
-  NODE_TYPE_ID: "i3.xlarge"
-  DRIVER_NODE_TYPE_ID: "m5.4xlarge"
-  SPARK_VERSION: "8.3.x-scala2.12"
-INITIAL:
-  MIN_WORKERS: 5
-  MAX_WORKERS: 30
-  NODE_TYPE_ID: "i3.xlarge"
-  DRIVER_NODE_TYPE_ID: "m5.4xlarge"
-  SPARK_VERSION: "8.3.x-scala2.12"
+cluster:
+  cluster_id : '0603-090325-flab576'
