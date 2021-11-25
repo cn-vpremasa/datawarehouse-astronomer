@@ -9,9 +9,7 @@ THIS_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)))
 env = os.environ['ENV']
 
 def read_config_file():
-    config_path = os.path.join(os.path.dirname(
-        THIS_DIR), 'config', 'CONFIG_{0}.yml'.format(env))
-
+    config_path = os.path.join(os.path.dirname(THIS_DIR), 'config', 'CONFIG_{0}.yml'.format(env))
     with open(config_path, 'r') as f:
         config = yaml.full_load(f)
     return config
