@@ -33,11 +33,13 @@ def ClientRes(input_src_list,sql_query):
       n = 11
     else:
       if n == 10:
-        raise RuntimeError("Tardis Data Log Failed. Reason: No reply from Tardis Server")
+        raise RuntimeError("Tardis Data Log Failed. Reason: No response from Tardis Server") # no tardis response
       n = n + 1
       time.sleep(60)
       continue
     return final_one
+
+
 
 def Criteria(input_src_list,sql_query,**kwargs):
   var_time=0
