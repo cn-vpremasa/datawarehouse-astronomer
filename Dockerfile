@@ -13,3 +13,4 @@ RUN pip install $TARDIS_WHEEL_FILE
 RUN rm $TARDIS_WHEEL_FILE
 RUN pip install pandas==1.2.4
 RUN pip install -U pandasql
+

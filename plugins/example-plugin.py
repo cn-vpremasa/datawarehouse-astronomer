@@ -37,4 +37,6 @@ class AstroLinksPlugin(AirflowPlugin):
             "category_icon": "fa-rocket",
             "href": ml.url,
         } for ml in menu_links
+
     ]
+
