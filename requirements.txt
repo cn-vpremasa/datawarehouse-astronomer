@@ -1,0 +1,9 @@
+awscli
+boto3
+databricks-cli
+hvac
+pandas
+requests
+sailthru-client
+six>=1.13.0
+

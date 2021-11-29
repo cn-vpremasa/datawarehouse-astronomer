@@ -1,0 +1,50 @@
+ENV: 'dev'
+BUCKET_NAME: 'cn-dse-adops-use-1-dev'
+GAM_SOURCE: 'GAM'
+AUTH_FILE: '/dbfs/FileStore/data_adops/validation/download_report/config_files/dfpAuth.yml'
+gam_report_src_list_dict: ['cnhw_ads.val_GamRpt_OrderLineItem_v2','cnhw_ads.val_GamRpt_Adunit_v2','cnhw_ads.val_GamRpt_Advertiser_v2','cnhw_ads.val_GamRpt_Deal_v2']
+gam_report_sql_query: "select * from (select count(*) as final_count from data_availability where source in ('cnhw_ads.val_GamRpt_OrderLineItem_v2','cnhw_ads.val_GamRpt_Adunit_v2','cnhw_ads.val_GamRpt_Advertiser_v2','cnhw_ads.val_GamRpt_Deal_v2')  and date(lastUpdatedTs) = current_date and status='Complete') where final_count=4"
+gam_val_src_list_dict: ['gam.NetworkImpressions_3379','gam.NetworkBackfillImpressions_3379','gam.NetworkClicks_3379', 'gam.NetworkBackfillClicks_3379','cnhw_ads.val_Gam_v2']
+gam_val_sql_query: "select * from (select count(*) as final_count from  (select count(source) from data_availability where source in   ('gam.NetworkImpressions_3379','gam.NetworkBackfillImpressions_3379','gam.NetworkClicks_3379', 'gam.NetworkBackfillClicks_3379')  and replace(lastUpdatedTs,'T',' ') > (select max(replace(data_availability.lastUpdatedTs,'T',' ')) from data_availability,curr_date_time where data_availability.source = 'cnhw_ads.val_Gam_v2' and replace(data_availability.lastUpdatedTs,'T',' ') < replace(curr_date_time.curr_date_time,'T',' ') and data_availability.status = 'Complete') and status = 'Complete' group by source )a  )where final_count=4"
+gam_stand_src_list_dict: ['gam.company','gam.NetworkImpressions_3379','gam.NetworkBackfillImpressions_3379','gam.NetworkClicks_3379', 'gam.NetworkBackfillClicks_3379','cnhw_ads.standardization_v2']
+gam_stand_sql_query: "select * from (select count(*) as final_count from  (select count(source) from data_availability where source in   ('gam.company','gam.NetworkImpressions_3379','gam.NetworkBackfillImpressions_3379','gam.NetworkClicks_3379', 'gam.NetworkBackfillClicks_3379')  and replace(lastUpdatedTs,'T',' ') > (select max(replace(data_availability.lastUpdatedTs,'T',' ')) from data_availability,curr_date_time where data_availability.source = 'cnhw_ads.standardization_v2' and replace(data_availability.lastUpdatedTs,'T',' ') < replace(curr_date_time.curr_date_time,'T',' ') and data_availability.status = 'Complete') and status = 'Complete' group by source )a  ) where final_count=5"
+gam_dim_src_list_dict: ['cnhw_ads.standardization_v2','cnhw_ads.val_Gam_v2','gam.line_items_3379','gam.ad_units_3379','gam.orders_3379','cnhw_ads.dimension_v2']
+gam_dim_sql_query: "select * from (select count(*) as final_count from  (select count(source) from data_availability where source in   ('cnhw_ads.standardization_v2','cnhw_ads.val_Gam_v2','gam.line_items_3379','gam.ad_units_3379', 'gam.orders_3379')  and replace(lastUpdatedTs,'T',' ') > (select max(replace(data_availability.lastUpdatedTs,'T',' ')) from data_availability,curr_date_time where data_availability.source = 'cnhw_ads.dimension_v2' and replace(data_availability.lastUpdatedTs,'T',' ') < replace(curr_date_time.curr_date_time,'T',' ') and data_availability.status = 'Complete') and status = 'Complete' group by source )a  ) where final_count=5"
+
+NOTEBOOK_PATHS:
+  DOWNLOAD_REPORT: '/Repos/Manjunath_Mani@condenast.com/datawarehouse-cnhw_v2/adops/validation/down_report_script/val_gam_summary_reports_etl'
+  GAM_ETL_VALDATION: '/Repos/Manjunath_Mani@condenast.com/datawarehouse-cnhw_v2/adops/validation/gam_validation/val_gam_validation_etl'
+  BUSMAP_NOTEBOOK: '/Repos/Manjunath_Mani@condenast.com/datawarehouse-cnhw_v2/adops/standardization/incremental/download_bus_mapping'
+  STND_DRIVER_NOTEBOOK: '/Repos/Manjunath_Mani@condenast.com/datawarehouse-cnhw_v2/adops/standardization/incremental/driver'
+  ADUNITS_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_adunits_etl'
+  ADVERTISER_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_advertiser_etl'
+  BRAND_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_brand_etl'
+  LINEITEMS_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_lineitems_etl'
+  LOCATION_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_location_etl'
+  ORDERS_NOTEBOOK: '/Users/Manjunath_Mani@condenast.com/adops/dimensions/incremental/dim_orders_etl'
+  STND_POSTLOAD_UPDT: '/Users/Manjunath_Mani@condenast.com/adops/standardization/incremental/driver_dimension'
+PROCESS_NAME:
+  LOCATION: 'location'
+  BRAND: 'brand'
+  ADUNITS: 'adunits'
+  ADVERTISER: 'advertiser'
+  LINEITEMS: 'lineitems'
+  ORDERS: 'orders'
+  DEVICE: 'device'
+dags:
+  gam_master_dag_id: 'gam_master'
+  gam_dim_dag_id: 'gam_dim'
+  gam_stnd_dag_id: 'gam_standardization'
+  owner: 'adops'
+  depends_on_past: False
+  gam_schedule: '30 12 * * *'
+  gam_stnd_schedule: '00 12 * * *'
+  schedule: '00 13 * * *'
+  email_on_failure: True
+  email_on_success: True
+  email_on_retry: True
+  email: ['manjunath_mani@condenast.com','vinodboosam_premasagar@condenast.com']
+  retries: 1
+  retry_delay: 5
+cluster:
+  cluster_id : '0603-090325-flab576'
